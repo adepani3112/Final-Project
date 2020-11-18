@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>United States COVID-19 Interactive Dashboard</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="https://unpkg.com/d3-tip@0.9.1/dist/index.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+    <style>
+        .center {
+            text-align: center;
+            color: snow;
+            background: black;
+
+            font-family: "Lucida Grande";
+        }
+    </style>
+
+
+    <!-- A lot of the styling, especially, the slider and the buttons and the dropdown came from W3schools -->
+    <style>
+        .states :hover {
+            fill: gold;
+        }
+
+        .state-borders {
+            fill: none;
+            stroke: black;
+            stroke-width: 0.9px;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+        }
+
+
+        .d3-tip {
+            background: aliceblue;
+            opacity: 3.0;
+            border: solid 5px black;
+            border-radius: 10px;
+        }
+
+
+        .centerDiv
+           {
+            width: 60%;
+            height:200px;
+            margin: 0 auto;
+            background-color: snow ;
+           }
+
+
+
+        .axisline line{
+            stroke: gray;
+        }
+
+        .axisline path{
+            stroke: gray;
+        }
+
+        .axisline text{
+            fill: gray;
+        }
+
+
+        .slidecontainer {
+            width: 100%; /* Width of the outside container */
+        }
+
+        /* The slider itself */
+        .slider {
+            -webkit-appearance: none;  /* Override default CSS styles */
+            appearance: none;
+            width: 100%; /* Full-width */
+            height: 10px; /* Specified height */
+            background: #d3d3d3; /* Grey background */
+            outline: none; /* Remove outline */
+            opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+            -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+            transition: opacity .2s;
+        }
+
+        /* Mouse-over effects */
+        .slider:hover {
+            opacity: 1; /* Fully shown on mouse-over */
+        }
+
+        /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            width: 75px; /* Set a specific slider handle width */
+            height: 10px; /* Slider handle height */
+            background: orange; /* Green background */
+            cursor: pointer; /* Cursor on hover */
+        }
+
+        .button {
+            background-color: orange;
+            border: none;
+            color: white;
+            padding: 1px 178px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            float: left;
+        }
+
+        .button2 {
+            background-color: orange;
+            border: none;
+            color: white;
+            padding: 1px 185px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            float: left;
+        }
+
+
+        .dropbtn {
+            background-color: orange;
+            color: white;
+            padding: 2px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {background-color: orange}
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+            background-color: #3e8e41;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<span id = "f" style="font-weight: bold;color: red"></span>
+
+<body style="background-color:black;"><body>
+
+<div>
+    <h1 class="center">United States COVID-19 Interactive Dashboard</h1>
+
+    United States Map:<br />
+    <svg
+            id="mapsvg_pr"
+            style="width: 1420px; height: 600px; border: 1px solid black; background: black"
+    ></svg>
+    <div style="text-align: center" id="slidecontainer">
+        <input id="slider" type="range" min="0" step="1" value="0" class="slider" />
+        <span style="color: white; "  id="date"></span>
+        <div style="text-align: center; border: 1px solid">
+            <button type = "button" class="button" onclick = "countymap()">County Level Map</button>
+            <button type = "button" class="button" onclick = "statemap()">State Level Map</button>
+            <button type = "button" class="button" onclick = "usamap()">United States Map</button>
+
+        </div>
+    </div>
+</div>
+
+<br>
+<br>
+
+<h2 class = "center" >Confirmed Cases Line Chart </h2>
+
+<div>
+    <svg
+    id="my_dataviz"
+            style="width: 1420px; height: 600px; border: 1px solid black; background: black"
+    ></svg>
+    <div id="other">
+        <div style="float: end; text-align: center"  >
+        <select id="selectButton" class="dropbtn"></select>
+    </div>
+        <button  type = "button"  class="button2" onclick = "stateChart()">State Chart</button>
+        <button  type = "button" class="button2" onclick = "countyChart()">County Chart</button>
+        <button  type = "button" class="button2" onclick = "usaChart()">United States  Chart</button>
+
+    </div>
+</div>
+
+<br>
+<br>
+
+<h2 class = "center" >Deaths Overtime Line Chart </h2>
+
+<div>
+    <svg
+            id="deathsviz"
+            style="width: 1420px; height: 600px; border: 1px solid black; background: black"
+    ></svg>
+    <div id="other2">
+        <div style="float: end; text-align: center"  >
+            <select id="selectButton2" class="dropbtn"></select>
+        </div>
+        <button  type = "button"  class="button2" onclick = "stateDeaths()">State Chart</button>
+        <button  type = "button" class="button2" onclick = "countyDeaths()">County Chart</button>
+        <button  type = "button" class="button2" onclick = "usaDeaths()">United States Chart</button>
+
+    </div>
+</div>
+
+
+
+<script src="vis.js"></script>
+<script src="charts.js"></script>
+<script src="charts-deaths.js"></script>
+
+
+
+
+</body>
+</html>
+
+
